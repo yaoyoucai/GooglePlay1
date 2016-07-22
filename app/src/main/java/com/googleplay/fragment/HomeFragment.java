@@ -1,16 +1,14 @@
 package com.googleplay.fragment;
 
-import android.graphics.Color;
 import android.view.View;
 import android.widget.ListView;
-import android.widget.TextView;
 
-import com.googleplay.adapter.MyBaseAdapter;
+import com.googleplay.adapter.BaseListAdapter;
+import com.googleplay.bean.AppInfo;
+import com.googleplay.http.protocol.HomeProtocol;
 import com.googleplay.utils.UIUtils;
-import com.googleplay.viewholder.BaseViewHolder;
 import com.googleplay.widget.LoadingPager;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,57 +18,36 @@ import java.util.List;
  * 描述：首页fragment
  */
 public class HomeFragment extends BaseFragment {
-    private List<String> mDatas;
+    private List<AppInfo> mDatas;
     private HomeAdapter mAdapter;
 
     @Override
     protected LoadingPager.LoadResult load() {
-        mDatas = new ArrayList<>();
-        for (int i = 0; i < 100; i++) {
-            mDatas.add("数据" + i);
-        }
+        HomeProtocol protocol = new HomeProtocol();
+        mDatas = protocol.load(0);
         return checkData(mDatas);
     }
 
     @Override
     protected View createSuccessView() {
         ListView listView = new ListView(UIUtils.getContext());
-        mAdapter = new HomeAdapter(mDatas);
+        mAdapter = new HomeAdapter(listView, mDatas);
         listView.setAdapter(mAdapter);
         return listView;
     }
 
-    private class HomeAdapter extends MyBaseAdapter<String> {
-        private HomeViewHolder holder;
-        public HomeAdapter(List<String> datas) {
-            super( datas);
+    private class HomeAdapter extends BaseListAdapter {
+        public HomeAdapter(ListView listView, List<AppInfo> datas) {
+            super(listView, datas);
         }
 
         @Override
-        public BaseViewHolder getViewHolder() {
-            return new HomeViewHolder();
+        protected List<AppInfo> onLoadMore() {
+            HomeProtocol protocol = new HomeProtocol();
+            mDatas = protocol.load(mDatas.size());
+            return mDatas;
         }
-
-
     }
 
-    private class HomeViewHolder extends BaseViewHolder<String> {
-        public TextView textView;
 
-        public HomeViewHolder() {
-            super();
-        }
-
-        @Override
-        protected View initView() {
-            textView = new TextView(UIUtils.getContext());
-            textView.setTextColor(Color.RED);
-            return textView;
-        }
-
-        @Override
-        protected void refreshView() {
-            textView.setText(getData());
-        }
-    }
 }

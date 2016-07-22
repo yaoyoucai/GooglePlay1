@@ -9,7 +9,7 @@ import android.view.View;
  * 描述：viewHolder基类
  */
 public abstract class BaseViewHolder<T> {
-    private View mView;
+    protected View mView;
     private T mData;
     public BaseViewHolder() {
         this.mView = initView();

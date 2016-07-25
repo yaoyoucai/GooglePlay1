@@ -71,7 +71,7 @@ public abstract class MyBaseAdapter<T> extends BaseAdapter implements AbsListVie
         return mViewHolder.getRootView();
     }
 
-    private boolean hasMore() {
+    protected boolean hasMore() {
         return true;
     }
 
